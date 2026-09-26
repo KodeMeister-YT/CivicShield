@@ -13,11 +13,11 @@ into plain-language explanations, evidence-backed findings, and a concrete next-
 ```mermaid
 flowchart LR
     A[DOCUMENT] --> B[EVIDENCE] --> C[LAW] --> D[RISK] --> E[ACTION]
-    style A fill:#faf9f6,stroke:#16181d,stroke-width:2px
-    style B fill:#fbf1dd,stroke:#a1780f,stroke-width:2px
-    style C fill:#e8efec,stroke:#1c3a3a,stroke-width:2px
-    style D fill:#fbeee2,stroke:#b5591a,stroke-width:2px
-    style E fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px
+    style A fill:#faf9f6,stroke:#16181d,stroke-width:2px,color:#16181d
+    style B fill:#fbf1dd,stroke:#a1780f,stroke-width:2px,color:#16181d
+    style C fill:#e8efec,stroke:#1c3a3a,stroke-width:2px,color:#16181d
+    style D fill:#fbeee2,stroke:#b5591a,stroke-width:2px,color:#16181d
+    style E fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px,color:#16181d
 ```
 
 ## Getting started
@@ -40,8 +40,8 @@ flowchart LR
     CE --> ID[Issue Detection] --> SR[Source Retrieval] --> RC[Risk / Confidence]
     RC --> AP[Action Plan] --> DB[(Dashboard)]
 
-    style D fill:#faf9f6,stroke:#16181d
-    style DB fill:#e8efec,stroke:#1c3a3a,stroke-width:2px
+    style D fill:#faf9f6,stroke:#16181d,color:#16181d
+    style DB fill:#e8efec,stroke:#1c3a3a,stroke-width:2px,color:#16181d
 ```
 
 ## User journey
@@ -57,9 +57,9 @@ flowchart TD
     APL --> RG[Response Generator]
     APL --> EV[Evidence Vault]
 
-    style L fill:#faf9f6,stroke:#16181d,stroke-width:2px
-    style SW fill:#fbf1dd,stroke:#a1780f,stroke-width:2px
-    style WCI fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px
+    style L fill:#faf9f6,stroke:#16181d,stroke-width:2px,color:#16181d
+    style SW fill:#fbf1dd,stroke:#a1780f,stroke-width:2px,color:#16181d
+    style WCI fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px,color:#16181d
 ```
 
 ## Verticals
@@ -71,9 +71,9 @@ graph LR
     CS --> CoS[ConsumerShield] --> CoS1[Refunds / Warranties / Purchase terms]
 
     style CS fill:#1c3a3a,stroke:#0f2626,color:#fff
-    style TS fill:#e8efec,stroke:#1c3a3a
-    style WS fill:#e8efec,stroke:#1c3a3a
-    style CoS fill:#e8efec,stroke:#1c3a3a
+    style TS fill:#e8efec,stroke:#1c3a3a,color:#16181d
+    style WS fill:#e8efec,stroke:#1c3a3a,color:#16181d
+    style CoS fill:#e8efec,stroke:#1c3a3a,color:#16181d
 ```
 
 All three run the same pipeline and components — see the [feature matrix](#feature-matrix).
@@ -131,7 +131,7 @@ flowchart TD
     DASH --> VAULT[Evidence Vault]
 
     style APP fill:#1c3a3a,stroke:#0f2626,color:#fff
-    style DASH fill:#e8efec,stroke:#1c3a3a,stroke-width:2px
+    style DASH fill:#e8efec,stroke:#1c3a3a,stroke-width:2px,color:#16181d
 ```
 
 ## Legal source retrieval
@@ -150,8 +150,8 @@ flowchart LR
     SEED -.-> COURTS[U.S. Courts]
     SEED -.-> USAGOV[USA.gov]
 
-    style LSP fill:#e8efec,stroke:#1c3a3a,stroke-width:2px
-    style EV fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px
+    style LSP fill:#e8efec,stroke:#1c3a3a,stroke-width:2px,color:#16181d
+    style EV fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px,color:#16181d
 ```
 
 Federal-level, hand-curated, real government URLs only. Not exhaustive. No source match →
@@ -165,8 +165,8 @@ flowchart LR
     AI --> RULE[Rule Engine — CURRENT] --> ZOD[Zod Output] --> DASH[Dashboard]
     AI -.-> FUT[LLM-Assisted — NOT BUILT] -.-> ZOD
 
-    style RULE fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px
-    style FUT fill:#faf9f6,stroke:#83868f,stroke-width:2px,stroke-dasharray: 5 5
+    style RULE fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px,color:#16181d
+    style FUT fill:#faf9f6,stroke:#83868f,stroke-width:2px,stroke-dasharray: 5 5,color:#16181d
 ```
 
 No external AI calls today — fully rule-based, zero hallucination risk, works offline. The dashed
