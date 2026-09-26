@@ -70,9 +70,9 @@ export function ResponseGenerator({
       role="dialog"
       aria-modal="true"
       aria-labelledby="response-gen-title"
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-ink/40 backdrop-blur-sm p-0 sm:p-6"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-ink/40 backdrop-blur-md p-0 sm:p-6 animate-fade-in"
     >
-      <div className="w-full sm:max-w-lg max-h-[90vh] overflow-y-auto scrollbar-thin rounded-t-xl sm:rounded-xl bg-white shadow-xl p-6">
+      <div className="w-full sm:max-w-lg max-h-[90vh] overflow-y-auto scrollbar-thin rounded-t-xl sm:rounded-xl bg-white shadow-2xl p-6 animate-modal-in border border-border">
         <div className="flex items-start justify-between">
           <h2 id="response-gen-title" className="font-serif-heading text-xl font-semibold text-ink">
             Generate Response

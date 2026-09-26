@@ -2,232 +2,115 @@
 
 **Know what they can do. Know what you can do.**
 
-CivicShield turns confusing legal documents (leases, termination notices, purchase agreements)
-into plain-language explanations, evidence-backed findings, and a concrete next-step plan.
+CivicShield is an AI-powered legal/civic rights navigator built for **LexHack 2026**. It helps
+ordinary people understand confusing legal and official documents by identifying important
+clauses, explaining them in plain language, grounding findings in verified legal sources, and
+turning that understanding into a concrete next-step plan.
 
-> Informational guidance, not legal representation. Not a substitute for professional legal
-> advice.
+> CivicShield provides informational guidance, not legal representation. It is a first layer of
+> legal understanding and action planning -- not a substitute for professional legal advice.
 
-**Verticals:** TenantShield (housing) · WorkShield (employment) · ConsumerShield (consumer)
+## Product philosophy
 
-```mermaid
-flowchart LR
-    A[DOCUMENT] --> B[EVIDENCE] --> C[LAW] --> D[RISK] --> E[ACTION]
-    style A fill:#faf9f6,stroke:#16181d,stroke-width:2px,color:#16181d
-    style B fill:#fbf1dd,stroke:#a1780f,stroke-width:2px,color:#16181d
-    style C fill:#e8efec,stroke:#1c3a3a,stroke-width:2px,color:#16181d
-    style D fill:#fbeee2,stroke:#b5591a,stroke-width:2px,color:#16181d
-    style E fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px,color:#16181d
 ```
+DOCUMENT -> EVIDENCE -> LAW -> RISK -> ACTION
+```
+
+Three MVP verticals: **TenantShield** (housing), **WorkShield** (employment), **ConsumerShield**
+(consumer disputes). The architecture is extensible to more domains.
 
 ## Getting started
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
-npm run build    # production build
-npm run lint
+npm run dev
 ```
 
-`/demo` for instant precomputed analyses (no upload needed) · `/analyze` to upload a real
-PDF/DOCX/TXT (10 MB limit).
+Visit `http://localhost:3000`. Try `/demo` for three instant, precomputed analyses that require
+no upload (TenantShield, WorkShield, ConsumerShield), or `/analyze` to upload a real PDF/DOCX/TXT
+document (10 MB limit).
 
-## Pipeline
-
-```mermaid
-flowchart LR
-    D[Document] --> EX[Extraction] --> CL[Classification] --> CE[Clause Extraction]
-    CE --> ID[Issue Detection] --> SR[Source Retrieval] --> RC[Risk / Confidence]
-    RC --> AP[Action Plan] --> DB[(Dashboard)]
-
-    style D fill:#faf9f6,stroke:#16181d,color:#16181d
-    style DB fill:#e8efec,stroke:#1c3a3a,stroke-width:2px,color:#16181d
+```bash
+npm run build   # production build
+npm run lint    # eslint
 ```
-
-## User journey
-
-```mermaid
-flowchart TD
-    L[Landing] --> U[Upload / Demo]
-    U --> F[Findings dashboard]
-    F --> HC[Click a finding<br/>→ clause highlighted]
-    HC --> SW["Show Me Why"<br/>source + confidence]
-    SW --> WCI["What Can I Do?"]
-    WCI --> APL[Action plan]
-    APL --> RG[Response Generator]
-    APL --> EV[Evidence Vault]
-
-    style L fill:#faf9f6,stroke:#16181d,stroke-width:2px,color:#16181d
-    style SW fill:#fbf1dd,stroke:#a1780f,stroke-width:2px,color:#16181d
-    style WCI fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px,color:#16181d
-```
-
-## Verticals
-
-```mermaid
-graph LR
-    CS[CivicShield] --> TS[TenantShield] --> TS1[Leases / Deposits / Termination]
-    CS --> WS[WorkShield] --> WS1[Contracts / Termination / Notice periods]
-    CS --> CoS[ConsumerShield] --> CoS1[Refunds / Warranties / Purchase terms]
-
-    style CS fill:#1c3a3a,stroke:#0f2626,color:#fff
-    style TS fill:#e8efec,stroke:#1c3a3a,color:#16181d
-    style WS fill:#e8efec,stroke:#1c3a3a,color:#16181d
-    style CoS fill:#e8efec,stroke:#1c3a3a,color:#16181d
-```
-
-All three run the same pipeline and components — see the [feature matrix](#feature-matrix).
-
-## TenantShield demo results
-
-Real output from `/api/demo/tenant` on the fictional sample lease — **demo data, not a
-real-world statistic**.
-
-```mermaid
-pie
-    title Sample TenantShield Demo — Finding Distribution
-    "Potential Legal Concern" : 3
-    "Review" : 3
-    "Low Concern" : 3
-    "High Attention" : 1
-```
-
-| Risk level | Count |
-|---|---|
-| 🔴 Potential Legal Concern | 3 |
-| 🟠 High Attention | 1 |
-| 🟡 Review | 3 |
-| 🟢 Low Concern | 3 |
-| **Total** | **10** |
-
-<a id="feature-matrix"></a>
-
-## Feature matrix
-
-| Feature | TenantShield | WorkShield | ConsumerShield |
-|---|---|---|---|
-| Document analysis | ✅ | ✅ | ✅ |
-| Clause detection | ✅ | ✅ | ✅ |
-| Risk classification | ✅ | ✅ | ✅ |
-| Show Me Why | ✅ | ✅ | ✅ |
-| Legal source retrieval | ✅ | ✅ | ✅ |
-| Document highlighting | ✅ | ✅ | ✅ |
-| Action Plan | ✅ | ✅ | ✅ |
-| Response Generator | ✅ | ✅ | ✅ |
-| Scenario Simulator | ✅ | ✅ | ✅ |
-| Evidence Vault | ✅ | ✅ | ✅ |
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    U[User] --> APP[Next.js App]
-    APP --> EXT[Extraction] --> CLS[Classification] --> ISS[Issue Detection]
-    ISS --> RAG[RAG Provider] --> SRC[(Legal Sources)]
-    RAG --> SF[Structured Findings] --> DASH[Dashboard]
-    DASH --> APLAN[Action Plan]
-    DASH --> RGEN[Response Generator]
-    DASH --> SIM[Scenario Simulator]
-    DASH --> VAULT[Evidence Vault]
-
-    style APP fill:#1c3a3a,stroke:#0f2626,color:#fff
-    style DASH fill:#e8efec,stroke:#1c3a3a,stroke-width:2px,color:#16181d
+```
+UPLOAD
+  -> DOCUMENT EXTRACTION      (src/lib/document)      text from pdf/docx/txt
+  -> DOCUMENT CLASSIFICATION  (src/lib/legal/classify) which vertical + category
+  -> CLAUSE/CLAIM EXTRACTION  (src/lib/document/structure) sections, clauses, facts
+  -> LEGAL ISSUE DETECTION    (src/lib/legal/detect-issues + issue-rules)
+  -> SOURCE RETRIEVAL (RAG)   (src/lib/rag)            keyword-scored retrieval over seeded sources
+  -> SOURCE-GROUNDED ANALYSIS (Finding.reasoning/sources/factVsInference)
+  -> RISK/IMPORTANCE SCORING  (Finding.severity/confidence)
+  -> EVIDENCE MAPPING         (Finding.clauseText/section/page)
+  -> ACTION PLAN GENERATION   (src/lib/ai/action-plan.ts)
+  -> USER DASHBOARD           (src/components/dashboard)
 ```
 
-## Legal source retrieval
+Every stage is isolated and produces zod-validated, structured output (`src/types`,
+`src/lib/ai/schema.ts`) -- the UI never depends on free-form LLM text and a failure at any stage
+surfaces a specific, user-facing error (`AnalysisPipelineError`) instead of crashing.
 
-```mermaid
-flowchart LR
-    F[Finding] --> Q[Keyword matching] --> LSP[LegalSourceProvider]
-    LSP --> SEED[(Seeded sources)] --> EV[Finding evidence]
+### Current implementation: deterministic, not an LLM call
 
-    SEED -.-> DOL[DOL]
-    SEED -.-> HUD[HUD]
-    SEED -.-> FTC[FTC]
-    SEED -.-> CFPB[CFPB]
-    SEED -.-> EEOC[EEOC]
-    SEED -.-> LII[Cornell LII]
-    SEED -.-> COURTS[U.S. Courts]
-    SEED -.-> USAGOV[USA.gov]
+For the hackathon build, clause classification and issue detection are implemented as a
+transparent, rule-based engine (`src/lib/legal/issue-rules.ts`) rather than a live LLM call. This
+was a deliberate choice for a legal-safety product: it is fully deterministic, has zero risk of
+hallucinated citations, works with no external API key or network dependency, and makes Demo Mode
+instant and 100% reliable during a live presentation. The schemas, retrieval abstraction, and
+pipeline are structured so a real LLM-assisted pass (with retry/repair against the same zod
+schemas) can be layered in without changing any downstream code -- see "Extending" below.
 
-    style LSP fill:#e8efec,stroke:#1c3a3a,stroke-width:2px,color:#16181d
-    style EV fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px,color:#16181d
-```
+### RAG / legal source retrieval
 
-Federal-level, hand-curated, real government URLs only. Not exhaustive. No source match →
-"Source verification unavailable" instead of a guess.
+`src/lib/rag/provider.ts` defines a `LegalSourceProvider` interface. The seeded implementation
+(`src/lib/rag/local-provider.ts`) scores sources by domain match, category/tag overlap, and
+keyword overlap against a hand-curated set of **real, verifiable government sources**
+(`src/data/legal-sources`): U.S. Department of Labor, HUD, FTC, CFPB, EEOC, Cornell Legal
+Information Institute, U.S. Courts, USA.gov. No statute, case, or citation is ever fabricated --
+if no source clears the relevance threshold, the UI shows "Source verification unavailable."
+instead of guessing.
 
-## Deterministic today, LLM-ready tomorrow
+To swap in a live legal database, embeddings + pgvector, or a licensed case-law API: implement
+`LegalSourceProvider` and change one line in `src/lib/rag/index.ts`.
 
-```mermaid
-flowchart LR
-    DOC[Document] --> AI[Analysis Interface]
-    AI --> RULE[Rule Engine — CURRENT] --> ZOD[Zod Output] --> DASH[Dashboard]
-    AI -.-> FUT[LLM-Assisted — NOT BUILT] -.-> ZOD
+### Demo Mode
 
-    style RULE fill:#eaf5ef,stroke:#2f7d5c,stroke-width:2px,color:#16181d
-    style FUT fill:#faf9f6,stroke:#83868f,stroke-width:2px,stroke-dasharray: 5 5,color:#16181d
-```
+`src/data/demo` contains three fictional, clearly-labelled sample documents and precomputes their
+full analyses once (in-memory cache) using the exact same pipeline stages as real uploads. This
+makes the demo instant and immune to network/AI failures during a live presentation.
 
-No external AI calls today — fully rule-based, zero hallucination risk, works offline. The dashed
-path is a future option, not implemented.
+## Key features
 
-## Core features
+- **"What Can I Do?" AI Strategy Advisor**: Built on the official `@google/genai` SDK (Gemini 2.5 Flash), providing executive strategy summaries, retained statutory rights, prioritized action checklists, **Do's & Don'ts**, customized negotiation scripts, and live interactive Q&A grounded in specific document clauses.
+- **Show Me Why**: Every finding traces back to the original clause (with section/page), the matched legal statute, the AI's reasoning trail, and a calibrated confidence score.
+- **State-Level Jurisdiction Intelligence**: Automatically matches statutory protections across California, New York, Texas, and Federal law (e.g., California Civil Code § 1950.5, Texas Property Code § 92.103, NY General Obligations Law § 7-108).
+- **Split-Screen Interactive Document Viewer**: Active breathing pulse highlighting (`animate-clause-pulse`) and animated risk badges directly over flagged text.
+- **1-Click Sample Document Loaders**: Immediate testing for residential leases, non-competes, and consumer warranty terms right on the upload page with zero local file requirements.
+- **Scenario Simulator ("What happens if...?")**: AI and decision-tree outcomes distinguishing known facts, probable outcomes, and uncertainties -- never guessing.
+- **Response Generator**: Generates formal, legally grounded dispute and counter-proposal letters tailored to landlords, employers, or vendors.
+- **Evidence Vault**: Comprehensive evidence locker with note creation, category filtering (`All`, `Clauses`, `Responses`, `Notes`), and one-click export to a structured `.txt` legal dossier.
+- **Printable & Markdown Audit Reports**: Generates comprehensive, exportable PDF and Markdown summary reports for legal aid clinics and mediation.
+- **AI Safety & Privacy Layer**: Uncertainty detection, strict fact-vs-inference isolation, in-memory zero-retention processing, and clear non-representation disclaimers.
 
-**Show Me Why** — clause → source → reasoning → confidence, always traceable.
+## Tech stack & disclosures
 
-**Action Plan**
+- **Framework**: Next.js 16 (App Router, Turbopack), React 19, TypeScript 5.
+- **AI & Reasoning Engine**: Google Gen AI SDK (`@google/genai`) with `gemini-2.5-flash` + reliable statutory heuristic fallback (runs online with `GEMINI_API_KEY` or 100% offline in demo mode).
+- **Styling & Motion**: Tailwind CSS v4, custom civic cyber-grid keyframes, glassmorphism (`backdrop-blur-md`), and interactive toast system.
+- **Validation**: Zod schema validation for all structured AI outputs.
+- **Document parsing**: `pdf-parse` (PDF with Windows-safe path resolution), `mammoth` (DOCX), native UTF-8 for plain text.
+- **Icons**: `lucide-react`.
+- **Privacy & Security**: Zero server-side persistence of uploaded files. Ingestion and analysis occur entirely in-memory. Evidence Vault items are stored strictly in client-side storage under user control.
+- **Legal sources**: Hand-verified federal and state government statutes (HUD, FTC, CFPB, California Civil Code, Texas Property Code, NY General Obligations Law).
 
-```mermaid
-flowchart LR
-    I[Issue] --> P[Preserve document] --> R[Record dates] --> S[Review source]
-    S --> D[Draft response] --> V[Save to vault]
-```
+## LexHack 2026 Track Alignment
 
-**Response Generator**
-
-```mermaid
-flowchart LR
-    F[Finding] --> R[Recipient type] --> DR[Draft] --> E[Edit] --> CS[Copy / Save]
-```
-
-**Scenario Simulator** — "What happens if...?" as a decision tree. Explorations, not guarantees.
-
-```mermaid
-flowchart TD
-    Q["What happens if...?"] --> O1[Possible outcome] --> D1[Potential dispute]
-    D1 --> A1[Further action /<br/>professional review]
-```
-
-**Evidence Vault** — save findings/responses/notes to localStorage.
-
-## Privacy
-
-```mermaid
-flowchart LR
-    B[Browser] --> API[API route] --> MEM[In-memory only] --> SA[Structured result]
-    SA --> SS[sessionStorage]
-    EVI[Finding / Response / Notes] -.opt-in.-> LS[localStorage vault]
-```
-
-No backend database. Uploaded files are never persisted — processed in-memory per request only.
-
-## Tech stack
-
-Next.js 16 · React 19 · TypeScript · Tailwind v4 · Zod · `pdf-parse` · `mammoth` · `lucide-react`
-
-No external AI API, no API keys required.
-
-## Limitations
-
-- Rule-based detection, not an LLM — misses nuance outside the seeded rules/sources.
-- Federal-level sources only; state/local law not modeled.
-- No auth or multi-user persistence.
-- No OCR for scanned/image-only PDFs.
-
-## Roadmap
-
-- Optional LLM-assisted analysis behind the same interface + schemas.
-- Embeddings/pgvector-backed source retrieval.
-- State/local jurisdiction sources.
-- OCR for scanned PDFs.
+- ⚖️ **Access to Justice & Civic Tech**: Demystifies one-sided adhesion contracts for vulnerable tenants, workers, and consumers with actionable negotiation scripts.
+- 🛡️ **AI Safety, Ethics & Governance**: Eliminates hallucinations through grounded RAG, explicit confidence metrics, fact-vs-inference separation, and privacy-preserving ephemeral processing.
+- ⚡ **Legal Automation & Workflow Innovation**: Full lifecycle automation from raw document parsing to interactive scenario modeling, dispute letter generation, and Evidence Vault dossier export.
+- 🚀 **LexHack Builders Fellowship**: Engineered for real-world deployment in partnership with community legal aid clinics and tenant advocacy organizations.

@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
 
   const file = formData.get("file");
   const categoryField = formData.get("category");
+  const jurisdictionField = formData.get("jurisdiction");
 
   if (!(file instanceof File)) {
     return errorResponse("upload", "No file provided.", "Please attach a document to analyze.");
@@ -31,6 +32,10 @@ export async function POST(req: NextRequest) {
 
   const category =
     typeof categoryField === "string" && isValidCategory(categoryField) ? categoryField : undefined;
+  const jurisdiction =
+    typeof jurisdictionField === "string" && jurisdictionField.trim().length > 0
+      ? jurisdictionField.trim()
+      : undefined;
 
   try {
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -39,6 +44,7 @@ export async function POST(req: NextRequest) {
       fileName: file.name,
       mimeType: file.type || inferMimeFromName(file.name),
       userSelectedCategory: category,
+      jurisdiction,
     });
     return NextResponse.json({ analysis });
   } catch (err) {

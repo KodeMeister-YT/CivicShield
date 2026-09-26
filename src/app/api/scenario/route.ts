@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { simulateScenario } from "@/lib/ai/scenario-simulator";
+import { generateAiScenario } from "@/lib/ai/gemini";
 import { findingSchema } from "@/lib/ai/schema";
 import { z } from "zod";
 
@@ -8,6 +9,7 @@ export const runtime = "nodejs";
 const requestSchema = z.object({
   question: z.string().min(3).max(500),
   finding: findingSchema.optional(),
+  jurisdiction: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -24,6 +26,18 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Attempt dynamic AI scenario simulation first
+    const aiResult = await generateAiScenario(
+      parsed.data.question,
+      parsed.data.finding,
+      parsed.data.jurisdiction
+    );
+
+    if (aiResult) {
+      return NextResponse.json({ result: aiResult });
+    }
+
+    // Fall back to rule-based decision trees
     const result = simulateScenario(parsed.data);
     return NextResponse.json({ result });
   } catch (err) {

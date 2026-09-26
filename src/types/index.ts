@@ -153,6 +153,7 @@ export interface DocumentAnalysis {
   fileName: string;
   category: DocumentCategory;
   domain: ShieldDomain;
+  jurisdiction?: string;
   isDemo: boolean;
   document: ExtractedDocument;
   findings: Finding[];

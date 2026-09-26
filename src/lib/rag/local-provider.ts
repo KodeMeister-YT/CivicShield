@@ -18,7 +18,7 @@ import type { LegalSource } from "@/types";
  */
 export class LocalKeywordProvider implements LegalSourceProvider {
   async retrieve(query: LegalSourceQuery) {
-    const { category, domain, text, limit = 3 } = query;
+    const { category, domain, text, jurisdiction, limit = 3 } = query;
     const words = tokenize(text);
 
     const scored = legalSources.map((source) => {
@@ -28,6 +28,13 @@ export class LocalKeywordProvider implements LegalSourceProvider {
       else if (source.domain === "General") score += 0.1;
 
       if (source.tags.includes(category)) score += 0.35;
+
+      // Jurisdiction matching bonus
+      if (jurisdiction && jurisdiction.toLowerCase() !== "federal" && jurisdiction.toLowerCase() !== "general") {
+        if (source.jurisdiction.toLowerCase().includes(jurisdiction.toLowerCase())) {
+          score += 0.45;
+        }
+      }
 
       const sourceWords = tokenize(`${source.title} ${source.excerpt}`);
       const overlap = words.filter((w) => sourceWords.includes(w)).length;

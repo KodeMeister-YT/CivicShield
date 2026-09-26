@@ -13,6 +13,8 @@ export interface LegalSourceQuery {
   domain: ShieldDomain;
   /** Free-text clause content, used for keyword/semantic matching. */
   text: string;
+  /** Optional jurisdiction specified by user or detected. */
+  jurisdiction?: string;
   /** Max number of sources to return. */
   limit?: number;
 }

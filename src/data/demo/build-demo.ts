@@ -4,14 +4,12 @@ import { detectIssues } from "@/lib/legal/detect-issues";
 import type { DocumentAnalysis, ExtractedDocument, Severity } from "@/types";
 import { CONSUMER_DEMO_TEXT, TENANT_DEMO_TEXT, WORK_DEMO_TEXT } from "./documents";
 
-/**
- * Builds precomputed demo analyses using the SAME rule-based pipeline
- * stages as real uploads (structure extraction, classification, issue
- * detection). Because the pipeline is deterministic and has no live LLM
- * dependency, this can run once at server startup and be cached in memory,
- * giving Demo Mode instant load times with zero risk of AI/network
- * failures during a live presentation.
- */
+const DEMO_JURISDICTIONS: Record<"tenant" | "work" | "consumer", string> = {
+  tenant: "California",
+  work: "California",
+  consumer: "Federal (US)",
+};
+
 async function buildAnalysis(
   fileName: string,
   text: string,
@@ -21,6 +19,7 @@ async function buildAnalysis(
   const facts = extractFacts(clauses);
   const detected = classifyDocumentCategory(text);
   const domain = domainForCategory(detected.category);
+  const jurisdiction = DEMO_JURISDICTIONS[slug];
 
   const document: ExtractedDocument = {
     id: `demo-doc-${slug}`,
@@ -34,7 +33,7 @@ async function buildAnalysis(
     truncated: false,
   };
 
-  const findings = await detectIssues(document, domain);
+  const findings = await detectIssues(document, domain, jurisdiction);
   const summary = summarize(findings.map((f) => f.severity));
 
   return {
@@ -43,6 +42,7 @@ async function buildAnalysis(
     fileName,
     category: detected.category,
     domain,
+    jurisdiction,
     isDemo: true,
     document,
     findings,

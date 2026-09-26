@@ -35,8 +35,9 @@ export async function runAnalysisPipeline(params: {
   fileName: string;
   mimeType: string;
   userSelectedCategory?: DocumentCategory;
+  jurisdiction?: string;
 }): Promise<DocumentAnalysis> {
-  const { buffer, fileName, mimeType, userSelectedCategory } = params;
+  const { buffer, fileName, mimeType, userSelectedCategory, jurisdiction } = params;
 
   // Stage 1: extraction
   let raw;
@@ -88,7 +89,7 @@ export async function runAnalysisPipeline(params: {
   // risk scoring (severity assigned per-rule), action plan (per-finding)
   let findings;
   try {
-    findings = await detectIssues(document, domain);
+    findings = await detectIssues(document, domain, jurisdiction);
   } catch (err) {
     throw new AnalysisPipelineError(
       "detecting_issues",
@@ -105,6 +106,7 @@ export async function runAnalysisPipeline(params: {
     fileName,
     category,
     domain,
+    jurisdiction,
     isDemo: false,
     document,
     findings,
