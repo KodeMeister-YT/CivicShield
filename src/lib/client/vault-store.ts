@@ -11,10 +11,19 @@ import type { EvidenceVaultItem } from "@/types";
  */
 const KEY = "civicshield:vault";
 
+let cachedItems: EvidenceVaultItem[] = [];
+let cachedRaw: string | null = null;
+
 export function getVaultItems(): EvidenceVaultItem[] {
+  if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as EvidenceVaultItem[]) : [];
+    if (raw === cachedRaw) {
+      return cachedItems;
+    }
+    cachedRaw = raw;
+    cachedItems = raw ? (JSON.parse(raw) as EvidenceVaultItem[]) : [];
+    return cachedItems;
   } catch {
     return [];
   }
@@ -22,9 +31,12 @@ export function getVaultItems(): EvidenceVaultItem[] {
 
 export function addVaultItem(item: EvidenceVaultItem) {
   try {
-    const items = getVaultItems();
-    items.unshift(item);
-    localStorage.setItem(KEY, JSON.stringify(items));
+    const items = getVaultItems().filter((i) => i.id !== item.id);
+    const updated = [item, ...items];
+    const serialized = JSON.stringify(updated);
+    localStorage.setItem(KEY, serialized);
+    cachedRaw = serialized;
+    cachedItems = updated;
     notifyVaultChange();
   } catch {
     // localStorage may be unavailable -- fail silently, vault is best-effort.
@@ -34,16 +46,28 @@ export function addVaultItem(item: EvidenceVaultItem) {
 export function removeVaultItem(id: string) {
   try {
     const items = getVaultItems().filter((i) => i.id !== id);
-    localStorage.setItem(KEY, JSON.stringify(items));
+    const serialized = JSON.stringify(items);
+    localStorage.setItem(KEY, serialized);
+    cachedRaw = serialized;
+    cachedItems = items;
     notifyVaultChange();
   } catch {
     // no-op
   }
 }
 
-// --- useSyncExternalStore plumbing, so React components can subscribe to
-// vault changes without setState-in-effect anti-patterns or hydration
-// mismatches (localStorage doesn't exist on the server).
+export function clearVault() {
+  try {
+    localStorage.removeItem(KEY);
+    cachedRaw = null;
+    cachedItems = [];
+    notifyVaultChange();
+  } catch {
+    // no-op
+  }
+}
+
+// --- useSyncExternalStore plumbing
 const listeners = new Set<() => void>();
 
 function notifyVaultChange() {
@@ -52,13 +76,34 @@ function notifyVaultChange() {
 
 export function subscribeVault(callback: () => void): () => void {
   listeners.add(callback);
-  return () => listeners.delete(callback);
+  
+  // Also listen for storage events from other tabs
+  const handleStorage = (e: StorageEvent) => {
+    if (e.key === KEY) {
+      cachedRaw = e.newValue;
+      cachedItems = e.newValue ? (JSON.parse(e.newValue) as EvidenceVaultItem[]) : [];
+      callback();
+    }
+  };
+  
+  if (typeof window !== "undefined") {
+    window.addEventListener("storage", handleStorage);
+  }
+  
+  return () => {
+    listeners.delete(callback);
+    if (typeof window !== "undefined") {
+      window.removeEventListener("storage", handleStorage);
+    }
+  };
 }
 
 export function getVaultSnapshot(): EvidenceVaultItem[] {
   return getVaultItems();
 }
 
+const SERVER_SNAPSHOT: EvidenceVaultItem[] = [];
 export function getVaultServerSnapshot(): EvidenceVaultItem[] {
-  return [];
+  return SERVER_SNAPSHOT;
 }
+

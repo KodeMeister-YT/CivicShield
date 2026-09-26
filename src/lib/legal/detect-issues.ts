@@ -13,7 +13,8 @@ import { buildActionsForFinding } from "@/lib/ai/action-plan";
  */
 export async function detectIssues(
   document: ExtractedDocument,
-  domain: ShieldDomain
+  domain: ShieldDomain,
+  jurisdiction?: string
 ): Promise<Finding[]> {
   const findings: Finding[] = [];
   const seenRuleClausePairs = new Set<string>();
@@ -37,6 +38,7 @@ export async function detectIssues(
       category: clause.category,
       domain,
       text: clause.text,
+      jurisdiction,
       limit: 2,
     });
 
